@@ -1,0 +1,20 @@
+{
+  "name": "snack-shack",
+  "version": "1.0.0",
+  "description": "Hello, the competitive world of software engineering has gotten to me and I have decided to enter the world of fast food!",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.11",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.2",
+    "typescript": "^5.5.3"
+  }
+}
