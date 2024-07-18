@@ -1,58 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1721316148072" clover="3.2.0">
-  <project timestamp="1721316148072" name="All files">
-    <metrics statements="35" coveredstatements="35" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6" elements="41" coveredelements="41" complexity="0" loc="35" ncloc="35" packages="2" files="4" classes="4"/>
+<coverage generated="1721320834346" clover="3.2.0">
+  <project timestamp="1721320834346" name="All files">
+    <metrics statements="39" coveredstatements="39" conditionals="2" coveredconditionals="2" methods="6" coveredmethods="6" elements="47" coveredelements="47" complexity="0" loc="39" ncloc="39" packages="2" files="4" classes="4"/>
     <package name="snack-shack">
-      <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <metrics statements="25" coveredstatements="25" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
       <file name="index.ts" path="/Users/dineshraj/dev/101ways-pairing-tests/snack-shack/index.ts">
-        <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <metrics statements="25" coveredstatements="25" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
         <line num="7" count="1" type="stmt"/>
-        <line num="8" count="1" type="stmt"/>
-        <line num="10" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="15" count="3" type="stmt"/>
-        <line num="16" count="3" type="stmt"/>
-        <line num="17" count="3" type="stmt"/>
-        <line num="18" count="3" type="stmt"/>
-        <line num="19" count="3" type="stmt"/>
-        <line num="20" count="3" type="stmt"/>
-        <line num="21" count="3" type="stmt"/>
-        <line num="22" count="3" type="stmt"/>
-        <line num="26" count="1" type="stmt"/>
-        <line num="27" count="1" type="stmt"/>
-        <line num="28" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="15" count="12" type="stmt"/>
+        <line num="16" count="12" type="stmt"/>
+        <line num="18" count="12" type="stmt"/>
+        <line num="20" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="8" type="stmt"/>
+        <line num="22" count="8" type="stmt"/>
+        <line num="23" count="8" type="stmt"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="25" count="8" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
       </file>
     </package>
     <package name="snack-shack.utils">
-      <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
       <file name="calculateEstimatedOrderTime.ts" path="/Users/dineshraj/dev/101ways-pairing-tests/snack-shack/utils/calculateEstimatedOrderTime.ts">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="4" type="stmt"/>
-        <line num="5" count="4" type="stmt"/>
-        <line num="7" count="4" type="stmt"/>
+        <line num="3" count="13" type="stmt"/>
+        <line num="4" count="13" type="stmt"/>
+        <line num="5" count="13" type="stmt"/>
+        <line num="7" count="13" type="stmt"/>
       </file>
       <file name="calculateServingTime.ts" path="/Users/dineshraj/dev/101ways-pairing-tests/snack-shack/utils/calculateServingTime.ts">
-        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
-        <line num="5" count="4" type="stmt"/>
-        <line num="6" count="4" type="stmt"/>
-        <line num="8" count="4" type="stmt"/>
-        <line num="10" count="4" type="stmt"/>
+        <line num="4" count="13" type="stmt"/>
+        <line num="6" count="13" type="stmt"/>
+        <line num="7" count="13" type="stmt"/>
+        <line num="9" count="13" type="stmt"/>
+        <line num="11" count="13" type="stmt"/>
       </file>
       <file name="currentTimeToString.ts" path="/Users/dineshraj/dev/101ways-pairing-tests/snack-shack/utils/currentTimeToString.ts">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
-        <line num="2" count="7" type="stmt"/>
+        <line num="2" count="25" type="stmt"/>
       </file>
     </package>
   </project>
