@@ -1,23 +1,23 @@
 import calculateEstimatedOrderTime from './utils/calculateEstimatedOrderTime';
 import calculateServingTime from './utils/calculateServingTime';
-import currenntTimeToString from './utils/currentTimeToString';
+import currentTimeToString from './utils/currentTimeToString';
 
-const timeToMakeBurger: number = 60;
-const timeToServe: number = 30;
-const fiveMinutes = 300;
+const TIME_TO_MAKE_BURGER = 60;
+const TIME_TO_SERVE = 30;
+const FIVE_MINUTES = 300;
 
 const processOrders = (orders: Array<string>) => {
   const orderSequence: Array<string> = [];
-  let currentTime: number = 0;
-  let estimatedTime: number = 0;
+  let currentTime = 0;
+  let estimatedTime = 0;
+
   orders.forEach((order) => {
     // start making the burger
-    const makingTime = currenntTimeToString(currentTime);
-    const [newCurrentTime, servingTime] = calculateServingTime(currentTime, timeToMakeBurger, timeToServe);
-    
+    const makingTime = currentTimeToString(currentTime);
+    const [newCurrentTime, servingTime] = calculateServingTime(currentTime, TIME_TO_MAKE_BURGER, TIME_TO_SERVE);
     const [newEstimatedTime, timeToGetToCustomer] = calculateEstimatedOrderTime(estimatedTime);
 
-    if (newEstimatedTime <= fiveMinutes) {
+    if (newEstimatedTime <= FIVE_MINUTES) {
       currentTime = newCurrentTime;
       estimatedTime = newEstimatedTime;
       orderSequence.push(`Order ${order}: time till served: ${timeToGetToCustomer}`);
