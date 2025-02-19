@@ -12,9 +12,8 @@ describe('Snack Snack', () => {
     jest.resetAllMocks();
   })
 
-
-  it('prints out the order sequence with the correct time', () => {
-    const ordersMock: Array<string> = ['sandwich 1', 'sandwich 2'];
+  it('prints out the sandwich order sequence with the correct time', () => {
+    const ordersMock: Array<string> = ['sandwich', 'sandwich'];
     const orders = snacksnack(ordersMock);
 
     const expectedOrderSequence = [
@@ -30,9 +29,8 @@ describe('Snack Snack', () => {
   });
 
   it('does not add the order to the queue if the order will take more than 5 minutes', () => {
-    const largeOrderMock: Array<string> = ['sandwich 1', 'sandwich 2', 'sandwich 3', 'sandwich 4', 'sandwich 5'];
+    const largeOrderMock: Array<string> = ['sandwich', 'sandwich', 'sandwich', 'sandwich', 'sandwich'];
     const orders = snacksnack(largeOrderMock);
-
     const expectedOrderSequence = [
       'Order sandwich 1: time till served: 60',
       '0:00 make sandwich 1',
@@ -48,13 +46,20 @@ describe('Snack Snack', () => {
     expect(orders).toEqual(expectedOrderSequence);
   });
 
-
   it('logs out that the order has been cancelled', () => {
     const largeOrderMock: Array<string> = ['sandwich 1', 'sandwich 2', 'sandwich 3', 'sandwich 4', 'sandwich 5'];
     snacksnack(largeOrderMock);
 
     expect(consoleLogMock).toHaveBeenCalledWith('Order sandwich 4 will take too long, so it has been cancelled');
     expect(consoleLogMock).toHaveBeenCalledWith('Order sandwich 5 will take too long, so it has been cancelled');
+  });
+
+  it('prints out the jacket potato order sequence with the correct time', () => {
+    const jacketPotatoOrderMock: Array<string> = ['sandwich 1', 'sandwich 2', 'sandwich 3'];
+    snacksnack(jacketPotatoOrderMock);
+
+    
+
   });
 
 });

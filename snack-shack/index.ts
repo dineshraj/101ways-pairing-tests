@@ -5,6 +5,7 @@ import currentTimeToString from './utils/currentTimeToString';
 const TIME_TO_MAKE_BURGER = 60;
 const TIME_TO_SERVE = 30;
 const FIVE_MINUTES = 300;
+const SEVEN_MINUTES = 420;
 
 const processOrders = (orders: Array<string>) => {
   const orderSequence: Array<string> = [];
@@ -26,7 +27,7 @@ const processOrders = (orders: Array<string>) => {
     } else {
       console.log(`Order ${order} will take too long, so it has been cancelled`);
     }
-  })
+  });
   return orderSequence;
 };
 
