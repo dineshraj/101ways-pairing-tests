@@ -1,6 +1,6 @@
-import makePlayers from './makePlayers';
+import { makePlayers } from './players';
 
-describe('makePlayers', () => { 
+describe('makePlayers', () => {
   it('makes players', () => {
     const playerNames = ['Sam', 'Dealer'];
     const players = makePlayers(playerNames);
