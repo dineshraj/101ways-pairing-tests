@@ -2,7 +2,7 @@ import { dealCard, makeDeck, shuffleDeck } from './helpers/deck';
 import { makePlayers } from './helpers/players';
 import { Player } from './types';
 
-import { START_GAME, CONTINUING, WINS, GAME_OVER } from './constants';
+import { START_GAME, CONTINUING, WINS, GAME_OVER, DRAW } from './constants';
 
 // suits don't matter in this game
 // substitute J, Q, K for 10 and A for 11
@@ -21,20 +21,21 @@ export const runFirstHand = (
     }
   });
 
-  if (realPlayer.total === 21) {
+  if (realPlayer.total === 21 && dealer.total !== 21) {    
     realPlayer.won = true;
-  } else if (dealer.total === 21) {
+  } else if (dealer.total === 21 && realPlayer.total !== 21) {
+    dealer.won = true;
+  } else if (realPlayer.total === 21 && dealer.total === 21) {
+    realPlayer.won = true;
     dealer.won = true;
   }
 };
 
-export const continueGame = (shuffledDeck: number[], player: Player) => {
-  // while (player.total < 17) {
-  //   const card = dealCard(shuffledDeck)
-  //   player.total += card
-  // }
-  // check total
-  // if new total is above 17 then finish turn
+export const continueGame = (shuffledDeck: number[], player: Player, maxTotal: number = 17) => {
+  while (player.total <= maxTotal) {
+    const card = dealCard(shuffledDeck)
+    player.total += card
+  }
 };
 
 export const checkResults = (realPlayer: Player, dealer: Player) => {
@@ -52,12 +53,16 @@ export const runGame = (shuffledDeck: number[], players: Player[]) => {
   
   runFirstHand(shuffledDeck, realPlayer, dealer);
 
-  if (realPlayer.won) {
+  if (realPlayer.won && !dealer.won) {
     console.log(`${realPlayer.name} ${WINS}`);
     console.log(GAME_OVER);
     return;
-  } else if (dealer.won) {
+  } else if (dealer.won && !realPlayer.won) {
     console.log(`${dealer.name} ${WINS}`);
+    console.log(GAME_OVER);
+    return;
+  } else if (dealer.won && realPlayer.won) {
+    console.log(DRAW);
     console.log(GAME_OVER);
     return;
   }
@@ -65,7 +70,7 @@ export const runGame = (shuffledDeck: number[], players: Player[]) => {
   console.log(CONTINUING);
 
   continueGame(shuffledDeck, realPlayer);
-  continueGame(shuffledDeck, dealer);
+  continueGame(shuffledDeck, dealer, realPlayer.total);
 
   checkResults(realPlayer, dealer);
 
