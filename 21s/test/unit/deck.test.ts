@@ -1,4 +1,4 @@
-import { makeDeck, shuffleDeck, dealCard } from '../../helpers/deck';
+import { makeDeck, shuffleDeck, dealCard, isHigherThan21 } from '../../helpers/deck';
 
 describe('makeDeck', () => {
   it('makes a deck of cards', () => {
@@ -24,4 +24,16 @@ describe('dealCard', () => {
     const card = dealCard(mockDeck);
     expect(card).toBe(6);
   });
+});
+
+describe('isHigherThan21', () => {
+  it('returns true if the value is higher than 21', () => {
+    const expectedValue = isHigherThan21(100);
+    expect(expectedValue).toBe(true);
+  });
+
+    it('returns true if the value is higher than 21', () => {
+      const expectedValue = isHigherThan21(10);
+      expect(expectedValue).toBe(false);
+    });
 });

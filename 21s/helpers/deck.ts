@@ -19,3 +19,7 @@ export const shuffleDeck = (deck: number[]) => {
 export const dealCard = (deck: number[]) => {
   return deck.pop();
 }
+
+export const isHigherThan21 = (number: number) => {
+  return number > 21;
+}

@@ -59,7 +59,7 @@ describe('21s', () => {
       expect(dealer.won).toBe(true);
     });
 
-    it('it carries on drawing cards until the player has a total over 17', () => {
+    it('it carries on drawing cards until the player has a total >= 17', () => {
       const player = { name: 'Sam', total: 4, won: false };
       const shuffledDeckMock = [2, 3, 9, 2]; // total + 3 cards = 18
       continueGame(shuffledDeckMock, player);
@@ -67,10 +67,10 @@ describe('21s', () => {
       expect(player.total).toEqual(18);
     });
 
-    it('it carries on drawing cards until the dealer has a total over player total', () => {
+    it('it carries on drawing cards until the supplied total is reached', () => {
       const dealer = { name: 'Dealer', total: 4, won: false };
       const playerTotal = 18;
-      const shuffledDeckMock = [1, 2, 3, 9, 2]; // total + 3 cards = 20
+      const shuffledDeckMock = [1, 3, 2, 9, 2]; // total + 3 cards = 20
       continueGame(shuffledDeckMock, dealer, playerTotal);
       expect(dealCardMock).toHaveBeenCalledTimes(4);
       expect(dealer.total).toEqual(20);

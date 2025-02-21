@@ -11,7 +11,7 @@ describe('21s', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('Game play', () => {
@@ -75,13 +75,35 @@ describe('21s', () => {
     });
 
     describe('Rest of game', () => {
-
-    /*
-      Cases:
-        * Sam gets 21 and Dealer gets 21
-
-    */      
-
+      it('Sam gets higher than 21 and loses instantly', () => {
+        // Sam will get 26 after drawing 2,5 (7) and then 9 (16), 10 (26)
+        const mockShuffledDeck = [10, 9, 1, 3, 2, 5];
+        const players = [
+          { name: 'Sam', total: 0, won: false },
+          { name: 'Dealer', total: 0, won: false },
+        ];
+        runGame(mockShuffledDeck, players);
+        expect(continueGameMock).toHaveBeenCalledTimes(1);
+        expect(players[1].won).toBe(true);
+        expect(consoleLogMock).toHaveBeenCalledWith('Game over');
+      });
+      /*
+        Cases:
+        * Sam gets higher than 21 and loses instantly
+        * Dealer wins regardless
+        
+        * If Sam doesn't lose he now has <= 21
+        * Dealer gets more than 21 and loses instantly
+        * Sam wins
+         
+        * If Sam doesn't lose he now has <= 21
+        * If Dealer doesn't lose he now has <= 21
+        * Compare score and highest wins
+        
+        * If Sam doesn't lose he now has <= 21
+        * If Dealer doesn't lose he now has <= 21
+        * Compare score and if the same it is a draw
+    */
     });
   });
 });

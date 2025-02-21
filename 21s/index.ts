@@ -1,4 +1,9 @@
-import { dealCard, makeDeck, shuffleDeck } from './helpers/deck';
+import {
+  dealCard,
+  isHigherThan21,
+  makeDeck,
+  shuffleDeck,
+} from './helpers/deck';
 import { makePlayers } from './helpers/players';
 import { Player } from './types';
 
@@ -21,7 +26,7 @@ export const runFirstHand = (
     }
   });
 
-  if (realPlayer.total === 21 && dealer.total !== 21) {    
+  if (realPlayer.total === 21 && dealer.total !== 21) {
     realPlayer.won = true;
   } else if (dealer.total === 21 && realPlayer.total !== 21) {
     dealer.won = true;
@@ -31,18 +36,32 @@ export const runFirstHand = (
   }
 };
 
-export const continueGame = (shuffledDeck: number[], player: Player, maxTotal: number = 17) => {
-  while (player.total <= maxTotal) {
-    const card = dealCard(shuffledDeck)
-    player.total += card
+export const continueGame = (
+  shuffledDeck: number[],
+  player: Player,
+  maxTotal: number = 17
+) => {
+  while (player.total < maxTotal) {
+    const card = dealCard(shuffledDeck);
+    player.total += card;
   }
 };
 
-export const checkResults = (realPlayer: Player, dealer: Player) => {
-  //   if (realPlayer.total > 21) {
-  //     // lose
-  //   }
-  //   // .. etc
+const finishGame = (realPlayer: Player, dealer: Player) => {
+  if (realPlayer.won && !dealer.won) {
+    console.log(`${realPlayer.name} ${WINS}`);
+    console.log(GAME_OVER);
+    return true;
+  } else if (dealer.won && !realPlayer.won) {
+    console.log(`${dealer.name} ${WINS}`);
+    console.log(GAME_OVER);
+    return true;
+  } else if (dealer.won && realPlayer.won) {
+    console.log(DRAW);
+    console.log(GAME_OVER);
+    return true;
+  }
+  return false;
 };
 
 export const runGame = (shuffledDeck: number[], players: Player[]) => {
@@ -50,29 +69,25 @@ export const runGame = (shuffledDeck: number[], players: Player[]) => {
   const dealer = players.find((player: Player) => player.name === 'Dealer');
 
   console.log(START_GAME);
-  
+
   runFirstHand(shuffledDeck, realPlayer, dealer);
 
-  if (realPlayer.won && !dealer.won) {
-    console.log(`${realPlayer.name} ${WINS}`);
-    console.log(GAME_OVER);
-    return;
-  } else if (dealer.won && !realPlayer.won) {
-    console.log(`${dealer.name} ${WINS}`);
-    console.log(GAME_OVER);
-    return;
-  } else if (dealer.won && realPlayer.won) {
-    console.log(DRAW);
-    console.log(GAME_OVER);
+  if (finishGame(realPlayer, dealer)) {
     return;
   }
 
   console.log(CONTINUING);
 
+  // continue game for Sam
   continueGame(shuffledDeck, realPlayer);
-  continueGame(shuffledDeck, dealer, realPlayer.total);
+  // check if Sam has lost
+  if (isHigherThan21(realPlayer.total)) {
+    dealer.won = true;
+    finishGame(realPlayer, dealer);
+    return;
+  }
 
-  checkResults(realPlayer, dealer);
+  continueGame(shuffledDeck, dealer, realPlayer.total);
 
   // =====================================
   // player 1 goes first
