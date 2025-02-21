@@ -1,10 +1,12 @@
-import twentyOnes, { runGame } from './';
+import { run } from 'jest';
+import twentyOnes, { runFirstHand, continueGame } from './';
+import * as deck from './helpers/deck';
 
 describe('21s', () => {
-  let consoleLogMock = jest.spyOn(console, 'log');
+  let dealCardMock;
 
   beforeEach(() => {
-    consoleLogMock = jest.spyOn(console, 'log');
+    dealCardMock = jest.spyOn(deck, 'dealCard');
   });
 
   afterEach(() => {
@@ -19,37 +21,32 @@ describe('21s', () => {
     expect(twentyOnes).not.toThrow();
   });
 
-  describe('Game play', () => {
-    it('Sam wins if he have 21 in the first hand of two cards and the Dealer does not', () => {
-      const mockShuffledDeck = [2, 3, 11, 10];
-      const players = [
-        { name: 'Sam', total: 0 },
-        { name: 'Dealer', total: 0 },
-      ];
-      runGame(mockShuffledDeck, players);
-      expect(consoleLogMock).toHaveBeenCalledWith('Sam wins');
+  describe('Game play methods', () => {
+    it('deals four cards in the first hand', () => {
+      const shuffledDeckMock = [1, 5, 7, 5];
+      const realPlayer = { name: 'Sam', total: 0, won: false };
+      const dealer = { name: 'Dealer', total: 0, won: false };
+      runFirstHand(shuffledDeckMock, realPlayer, dealer);
+      expect(dealCardMock).toHaveBeenCalledTimes(4);
     });
 
-    it('The dealer wins if he have 21 in the first hand of two cards and the Dealer does not', () => {
-      const mockShuffledDeck = [10, 11, 1, 10];
-      const players = [
-        { name: 'Sam', total: 0 },
-        { name: 'Dealer', total: 0 },
-      ];
-      runGame(mockShuffledDeck, players);
-      expect(consoleLogMock).toHaveBeenCalledWith('Dealer wins');
+    it('sets the correct player to "won" if they win', () => {
+      let realPlayer = { name: 'Sam', total: 0, won: false };
+      let dealer = { name: 'Dealer', total: 0, won: false };
+
+      let shuffledDeckMock = [1, 5, 10, 11];
+      runFirstHand(shuffledDeckMock, realPlayer, dealer);
+      expect(realPlayer.won).toBe(true);
+      expect(dealer.won).toBe(false);
+
+      realPlayer = { name: 'Sam', total: 0, won: false };
+      dealer = { name: 'Dealer', total: 0, won: false };
+      shuffledDeckMock = [10, 11, 1, 5];
+      runFirstHand(shuffledDeckMock, realPlayer, dealer);
+      expect(realPlayer.won).toBe(false);
+      expect(dealer.won).toBe(true);
     });
 
-    it('The game continues if neither player has 21 in the first hand of two cards', () => {
-      const mockShuffledDeck = [1, 11, 2, 10];
-      const players = [
-        { name: 'Sam', total: 0 },
-        { name: 'Dealer', total: 0 },
-      ];
-      runGame(mockShuffledDeck, players);
-      expect(consoleLogMock).toHaveBeenCalledWith(
-        'No one wins. Continuing game...'
-      );
-    });
+    it('it carries on drawing cards until a player has a total over 17')
   });
 });

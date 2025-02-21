@@ -1,4 +1,4 @@
-import { makeDeck, shuffleDeck, dealCard } from './deck';
+import { makeDeck, shuffleDeck, dealCard } from '../../helpers/deck';
 
 describe('makeDeck', () => {
   it('makes a deck of cards', () => {
