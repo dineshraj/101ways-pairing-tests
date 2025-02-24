@@ -1,12 +1,15 @@
 {
-  "types": ["jest", "node"],
+  "types": ["@types/jest", "jest", "node"],
   "compilerOptions": {
-    "esModuleInterop": true,
+    "outDir": "./dist",
     "lib": ["ES6", "dom"],
-    "module": "ESNext",
+    "module": "CommonJS",
     "target": "ES6",
     // "strict": true,
     "skipLibCheck": true,
-    // "forceConsistentCasingInFileNames": true,
-  }
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "include": ["./"],
+  "exclude": ["node_modules", "**/*.test.ts", "jest.config.ts"] // Exclude test files
 }

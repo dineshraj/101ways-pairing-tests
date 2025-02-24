@@ -1,4 +1,10 @@
-import { makeDeck, shuffleDeck, dealCard, isHigherThan21 } from '../../helpers/deck';
+import { expect, describe, it } from '@jest/globals';
+import {
+  makeDeck,
+  shuffleDeck,
+  dealCard,
+  isHigherThan21,
+} from '../../helpers/deck';
 
 describe('makeDeck', () => {
   it('makes a deck of cards', () => {
@@ -32,8 +38,8 @@ describe('isHigherThan21', () => {
     expect(expectedValue).toBe(true);
   });
 
-    it('returns true if the value is higher than 21', () => {
-      const expectedValue = isHigherThan21(10);
-      expect(expectedValue).toBe(false);
-    });
+  it('returns true if the value is higher than 21', () => {
+    const expectedValue = isHigherThan21(10);
+    expect(expectedValue).toBe(false);
+  });
 });

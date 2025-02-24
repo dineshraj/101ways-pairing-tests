@@ -20,6 +20,7 @@ export const dealCard = (deck: number[]) => {
   return deck.pop();
 }
 
+// remove this and use the method below
 export const isHigherThan21 = (number: number) => {
   return number > 21;
 }

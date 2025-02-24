@@ -80,6 +80,7 @@ export const runGame = (shuffledDeck: number[], players: Player[]) => {
 
   // continue game for Sam
   continueGame(shuffledDeck, realPlayer);
+
   // check if Sam has lost
   if (isHigherThan21(realPlayer.total)) {
     dealer.won = true;
@@ -89,18 +90,17 @@ export const runGame = (shuffledDeck: number[], players: Player[]) => {
 
   continueGame(shuffledDeck, dealer, realPlayer.total);
 
-  // =====================================
-  // player 1 goes first
-  // * player 1 keeps drawing cards until their total is higher than 17
-  // if player 1 gets higher than 21 then player 2 wins (GAME OVER)
-  // if player 1 is in the range of 17-21, it is player 2's turn
-  // =====================================
-  // * player 1 keeps drawing cards until their total is higher than 17
-  // if player 2 gets higher than 21 then player 1 wins (GAME OVER) (remember player two wont even get a go if player  one is over 21 anyway
-  // if neither player busts, the player with the highest total wins
-  // if there is a tie, the dealer wins
-  // }
+  if (isHigherThan21(dealer.total)) {
+    realPlayer.won = true;
+    finishGame(realPlayer, dealer);
+    return;
+  }
 
+  // both players have ended with less than or equal to 21
+  // but the dealer only stops drawing when he has a higher total than Sam
+  // thus the dealer has to win in this case
+  dealer.won = true;
+  finishGame(realPlayer, dealer);
   return;
 };
 

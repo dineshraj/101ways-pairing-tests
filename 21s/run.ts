@@ -1,0 +1,3 @@
+import twentyOnes from ".";
+
+twentyOnes();

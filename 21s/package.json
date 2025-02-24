@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Can you beat the dealer at 21",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
     "test": "jest",
-    "build": "tsc index.ts"
+    "test:watch": "npm t -- --watch",
+    "build": "tsc",
+    "start": "node dist/run.js"
   },
   "keywords": [],
   "author": "",

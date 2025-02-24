@@ -1,9 +1,18 @@
-import twentyOnes, { runFirstHand, continueGame } from './index';
-import * as deck from './helpers/deck';
+import {
+  expect,
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
+
+import twentyOnes, { runFirstHand, continueGame } from '../../index';
+import * as deck from '../../helpers/deck';
 
 describe('21s', () => {
-  let dealCardMock: jest.SpyInstance;
-  let consoleLogMock: jest.SpyInstance;
+  let dealCardMock;
+  let consoleLogMock;
 
   beforeEach(() => {
     consoleLogMock = jest.spyOn(console, 'log');
@@ -53,7 +62,7 @@ describe('21s', () => {
       let realPlayer = { name: 'Sam', total: 0, won: false };
       let dealer = { name: 'Dealer', total: 0, won: false };
       let shuffledDeckMock = [11, 10, 10, 11];
-      
+
       runFirstHand(shuffledDeckMock, realPlayer, dealer);
       expect(realPlayer.won).toBe(true);
       expect(dealer.won).toBe(true);

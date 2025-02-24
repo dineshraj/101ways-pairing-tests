@@ -1,3 +1,5 @@
+import { expect, describe, it, beforeEach, afterEach, jest } from '@jest/globals';
+
 import { runGame } from '../../index';
 import * as index from '../../index';
 
@@ -15,13 +17,11 @@ describe('21s', () => {
   });
 
   describe('Game play', () => {
-
     afterEach(() => {
       jest.restoreAllMocks();
     });
 
     describe('First hand', () => {
-
       it('Sam wins if only he have 21 in the first hand and the game stops', () => {
         const mockShuffledDeck = [2, 3, 11, 10];
         const players = [
@@ -50,12 +50,14 @@ describe('21s', () => {
         const mockShuffledDeck = [10, 11, 11, 10];
         const players = [
           { name: 'Sam', total: 0, won: false },
-          { name: 'Dealer', total: 0, won: false }
+          { name: 'Dealer', total: 0, won: false },
         ];
         runGame(mockShuffledDeck, players);
         expect(players[0].won).toBe(true);
         expect(players[1].won).toBe(true);
-        expect(consoleLogMock).toHaveBeenCalledWith('Draw!');
+        expect(consoleLogMock).toHaveBeenCalledWith(
+          'Draw! Both players have won'
+        );
         expect(consoleLogMock).toHaveBeenCalledWith('Game over');
         expect(continueGameMock).not.toHaveBeenCalled();
       });
@@ -76,7 +78,7 @@ describe('21s', () => {
 
     describe('Rest of game', () => {
       it('Sam gets higher than 21 and loses instantly', () => {
-        // Sam will get 26 after drawing 2,5 (7) and then 9 (16), 10 (26)
+        // Sam will get 26 after drawing 2, 5 (7) and then 9 (16) and 10 (26)
         const mockShuffledDeck = [10, 9, 1, 3, 2, 5];
         const players = [
           { name: 'Sam', total: 0, won: false },
@@ -87,23 +89,34 @@ describe('21s', () => {
         expect(players[1].won).toBe(true);
         expect(consoleLogMock).toHaveBeenCalledWith('Game over');
       });
-      /*
-        Cases:
-        * Sam gets higher than 21 and loses instantly
-        * Dealer wins regardless
-        
-        * If Sam doesn't lose he now has <= 21
-        * Dealer gets more than 21 and loses instantly
-        * Sam wins
-         
-        * If Sam doesn't lose he now has <= 21
-        * If Dealer doesn't lose he now has <= 21
-        * Compare score and highest wins
-        
-        * If Sam doesn't lose he now has <= 21
-        * If Dealer doesn't lose he now has <= 21
-        * Compare score and if the same it is a draw
-    */
+
+      it('if Sam is still in play and the Dealer gets more than 21, the dealer loses', () => {
+        // Sam will get 18 after drawing 2, 5 (7) and then 9 (16) and 2 (18)
+        // Dealer will get 22 after drawing 3, 1 (4) and then 11 (16) and 7 (22)
+        const mockShuffledDeck = [7, 11, 2, 9, 1, 3, 2, 5];
+        const players = [
+          { name: 'Sam', total: 0, won: false },
+          { name: 'Dealer', total: 0, won: false },
+        ];
+        runGame(mockShuffledDeck, players);
+        expect(continueGameMock).toHaveBeenCalledTimes(2);
+        expect(players[0].won).toBe(true);
+        expect(consoleLogMock).toHaveBeenCalledWith('Game over');
+      });
+
+      it('if both players do not get over 21 then Dealer wins if he has the highest score', () => {
+        // Sam will get 18 after drawing 2, 5 (7) and then 9 (16) and 1 (17)
+        // Dealer will get 22 after drawing 3, 1 (4) and then 11 (15) and 3 (18)
+        const mockShuffledDeck = [3, 11, 1, 9, 1, 3, 2, 5];
+        const players = [
+          { name: 'Sam', total: 0, won: false },
+          { name: 'Dealer', total: 0, won: false },
+        ];
+        runGame(mockShuffledDeck, players);
+        expect(continueGameMock).toHaveBeenCalledTimes(2);
+        expect(players[1].won).toBe(true);
+        expect(consoleLogMock).toHaveBeenCalledWith('Game over');
+      });
     });
   });
 });
