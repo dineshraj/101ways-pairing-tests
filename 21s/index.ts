@@ -41,6 +41,7 @@ export const continueGame = (
   player: Player,
   maxTotal: number = 17
 ) => {
+  // should be <= if Sam's go and < if Dealer's go
   while (player.total < maxTotal) {
     const card = dealCard(shuffledDeck);
     player.total += card;

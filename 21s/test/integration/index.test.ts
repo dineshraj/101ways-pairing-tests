@@ -104,7 +104,7 @@ describe('21s', () => {
         expect(consoleLogMock).toHaveBeenCalledWith('Game over');
       });
 
-      it('if both players do not get over 21 then Dealer wins if he has the highest score', () => {
+      it('if both players do not get over 21 then Dealer wins as he will have the higher score', () => {
         // Sam will get 18 after drawing 2, 5 (7) and then 9 (16) and 1 (17)
         // Dealer will get 22 after drawing 3, 1 (4) and then 11 (15) and 3 (18)
         const mockShuffledDeck = [3, 11, 1, 9, 1, 3, 2, 5];
