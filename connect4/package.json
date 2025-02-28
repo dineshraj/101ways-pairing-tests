@@ -2,10 +2,11 @@
   "name": "connect4",
   "version": "1.0.0",
   "description": "Connect4 is a grid-based game, where players take it in turns to add tokens. The winner is whoever manages to line up 4 pieces, in any direction, first. Diagonals are allowed.",
-  "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node ./dist/run.js",
     "test": "jest",
+    "build": "tsc",
     "test:watch": "npm test -- --watch"
   },
   "keywords": [],
