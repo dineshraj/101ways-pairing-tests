@@ -3,7 +3,8 @@ import { Grid } from '../types';
 
 export const makeMove = (grid: Grid, column: number, playerSymbol: string) => {
   const columnAsIndex = column - 1;
-  const newGrid = grid;
+  // make deep copy of array
+  const newGrid = JSON.parse(JSON.stringify(grid));
   let success = false;
 
   // check if bottom of column is empty

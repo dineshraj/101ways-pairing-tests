@@ -37,19 +37,23 @@ import { Grid, Player } from './types';
 import { makeMove } from './helpers/gameLogic';
 import { INVALID_COLUMN } from './constants';
 
-const rl = readline.createInterface({ input, output });
+export const someoneHasWon = (value: boolean = false) => {
+  return value;
+};
 
 export const runGame = async (
   grid: Grid,
   players: Player[],
   rows: number,
-  cols: number
+  cols: number,
+  rl: readline.Interface,
+  someoneHasWon: (value?: boolean) => boolean
 ) => {
-  let someoneHasWon = false;
+  // let someoneHasWon = false;
   let moves = 0;
   let player = 0;
 
-  while (!someoneHasWon) {
+  while (!someoneHasWon()) {
     const currentPlayer = players[player];
     rl.write(`It's your move ${players[player].name}\n`);
     rl.write('This is the grid at the moment:\n\n');
@@ -79,23 +83,22 @@ export const runGame = async (
     }
 
     // just for now
-    return;
+    // return;
   }
 };
 
 const Connect4 = async (rows: number = 6, cols: number = 7) => {
+  const rl = readline.createInterface({ input, output });
   const grid = createGrid(rows, cols);
 
   const playerOneName = await rl.question('Enter player one name: ');
   const playerTwoName = await rl.question('Enter Player two name: ');
-  console.log("🚀 ~ Connect4 ~ rl:", rl)
   const players = [
     { name: playerOneName, symbol: 'x' },
     { name: playerTwoName, symbol: 'o' }
   ];
-  console.log("🚀 ~ Connect4 ~ players:", players)
 
-  runGame(grid, players, rows, cols);
+  return runGame(grid, players, rows, cols, rl, someoneHasWon);
 };
 
 export default Connect4;
