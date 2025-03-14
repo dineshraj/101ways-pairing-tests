@@ -34,7 +34,7 @@ import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { createGrid, drawGrid, validateColumn } from './helpers/grid';
 import { Grid, Player } from './types';
-import { makeMove } from './helpers/gameLogic';
+import { checkVerticalWinner, makeMove } from './helpers/gameLogic';
 import { INVALID_COLUMN } from './constants';
 
 export const someoneHasWon = (value: boolean = false) => {
@@ -49,14 +49,16 @@ export const runGame = async (
   rl: readline.Interface,
   someoneHasWon: (value?: boolean) => boolean
 ) => {
-  // let someoneHasWon = false;
   let moves = 0;
   let player = 0;
 
   while (!someoneHasWon()) {
     const currentPlayer = players[player];
     rl.write(`It's your move ${players[player].name}\n`);
+    console.log(`It's your move ${players[player].name}\n`);
+    
     rl.write('This is the grid at the moment:\n\n');
+    console.log('This is the grid at the moment:\n\n')
     drawGrid(grid);
 
     const column = await rl.question(
@@ -65,6 +67,7 @@ export const runGame = async (
 
     // validate column number is within range
     if (validateColumn(grid, parseInt(column))) {
+      console.log('valid column and current grid', grid);
       const { newGrid, success } = makeMove(
         grid,
         parseInt(column),
@@ -72,7 +75,12 @@ export const runGame = async (
       );
 
       if (success) {
-        grid = newGrid;
+        grid = JSON.parse(JSON.stringify(newGrid));
+        // check if anyone has won vertically (others coming later!)
+        if (checkVerticalWinner(grid, currentPlayer.symbol)) {
+          console.log(`${currentPlayer.name} has won!`)
+          return;
+        }
         // swap player index
         player = player === 0 ? 1 : 0;
         //increment moves

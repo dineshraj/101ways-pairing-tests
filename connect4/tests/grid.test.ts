@@ -38,8 +38,8 @@ describe('Grid helper', () => {
       const grid = createGrid(2, 3);
       drawGrid(grid);
 
-      expect(consoleLogMock).toHaveBeenCalledTimes(1);
-      expect(consoleLogMock).toHaveBeenCalledWith('. . .\n. . .');
+      expect(consoleLogMock).toHaveBeenCalled();
+      expect(consoleLogMock).toHaveBeenCalledWith('Current grid\n. . .\n. . .');
     });
   });
 

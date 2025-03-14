@@ -1,4 +1,8 @@
-import { makeMove } from '../helpers/gameLogic';
+import {
+  makeMove,
+  checkVerticalWinner,
+  checkHorizontalWinner
+} from '../helpers/gameLogic';
 import { createGrid } from '../helpers/grid';
 
 describe('gameLogic', () => {
@@ -74,5 +78,57 @@ describe('gameLogic', () => {
     expect(newGrid).toStrictEqual(expectedGrid);
     expect(success).toBe(false);
     expect(consoleLogMock).toHaveBeenCalledWith('Invalid move');
+  });
+
+  it('declares a winner when there are four vertical tokens', () => {
+    const grid = [
+      ['.', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', 'x', '.']
+    ];
+
+    const result = checkVerticalWinner(grid, 'o');
+
+    expect(result).toBe(true);
+  });
+
+  it('does not declare a winner when there are less than four vertical tokens', () => {
+    const grid = [
+      ['.', '.', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', 'x', '.']
+    ];
+
+    const result = checkVerticalWinner(grid, 'o');
+
+    expect(result).toBe(false);
+  });
+
+  it('declares a winner when there are four horizontal tokens', () => {
+    const grid = [
+      ['.', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', 'o', '.'],
+      ['x', 'x', 'x', 'x']
+    ];
+
+    const result = checkHorizontalWinner(grid, 'x');
+
+    expect(result).toBe(true);
+  });
+
+  it('does not declares a winner when there are not four horizontal tokens', () => {
+    const grid = [
+      ['.', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', 'o', '.'],
+      ['x', 'x', 'o', 'x']
+    ];
+
+    const result = checkHorizontalWinner(grid, 'x');
+
+    expect(result).toBe(false);
   });
 });

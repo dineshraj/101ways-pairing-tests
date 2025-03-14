@@ -1,2 +1,2 @@
 export const EMPTY = '.';
-export const INVALID_COLUMN = 'Invalid colum!'
+export const INVALID_COLUMN = 'Invalid column!'

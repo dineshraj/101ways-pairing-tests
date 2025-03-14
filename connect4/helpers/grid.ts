@@ -15,7 +15,7 @@ export const createGrid = (numRows: number, numCols: number) => {
 
 export const drawGrid = (grid: Grid) => {
   const prettyGrid = grid.map((d) => d.join(' ')).join('\n');
-  console.log(prettyGrid);
+  console.log(`Current grid\n${prettyGrid}`);
 };
 
 export const validateColumn = (grid: Grid, chosenColumn: number) => {

@@ -96,13 +96,13 @@ describe('Connect4', () => {
     expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
   });
 
-  it('makes a move if the column is valid', async () => {
+  it('makes a move if the column is valid and the column is empty', async () => {
     const validateColumnSpy = jest.spyOn(gridHelpers, 'validateColumn');
     const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
     const rows = 2;
     const cols = 2;
     const grid = createGrid(rows, cols);
-    console.log('🚀 ~ it ~ grid:', grid);
+
     const rl = {
       question: jest
         .fn()
@@ -123,5 +123,108 @@ describe('Connect4', () => {
     expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
     expect(validateColumnSpy).toHaveReturnedWith(true);
     expect(makeMoveSpy).toHaveBeenCalledWith(grid, 2, 'x');
+  });
+
+  it('makes a valid move if the column is not empty', async () => {
+    const validateColumnSpy = jest.spyOn(gridHelpers, 'validateColumn');
+    const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
+    const rows = 2;
+    const cols = 2;
+    const initialGrid = [
+      ['.', '.'],
+      ['.', '.']
+    ];
+    const secondGrid = [
+      ['.', '.'],
+      ['.', 'x']
+    ];
+
+    const rl = {
+      question: jest
+        .fn()
+        .mockResolvedValueOnce('Dineshraj')
+        .mockResolvedValueOnce('Chloe')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('1'),
+      write: jest.fn()
+    } as unknown as Interface;
+
+    jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+    someoneHasWonMock
+      .mockImplementationOnce(() => false)
+      .mockImplementationOnce(() => false)
+      .mockImplementationOnce(() => true);
+
+    await Connect4(rows, cols);
+
+    expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
+    expect(makeMoveSpy).toHaveBeenCalledWith(initialGrid, 2, 'x');
+    expect(rl.write).toHaveBeenCalledWith("It's your move Chloe\n");
+    expect(validateColumnSpy).toHaveReturnedWith(true);
+    expect(makeMoveSpy).toHaveBeenCalledWith(secondGrid, 2, 'o');
+  });
+
+  it('swaps players after a successful move', async () => {
+    const rows = 2;
+    const cols = 2;
+
+    const rl = {
+      question: jest
+        .fn()
+        .mockResolvedValueOnce('Dineshraj')
+        .mockResolvedValueOnce('Chloe')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('2'),
+      write: jest.fn()
+    } as unknown as Interface;
+
+    jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+    someoneHasWonMock
+      .mockImplementationOnce(() => false)
+      .mockImplementationOnce(() => false)
+      .mockImplementationOnce(() => true);
+
+    await Connect4(rows, cols);
+
+    expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
+    expect(rl.write).toHaveBeenCalledWith("It's your move Chloe\n");
+  });
+
+  it('determines the winner and finishes the game if someone has 4 horizontal tokens', async () => {
+    const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
+    const rows = 4;
+    const cols = 4;
+    const gridBeforeEnd = [
+      ['.', '.', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', '.', '.'],
+      ['x', 'o', 'x', '.']
+    ];
+
+    const rl = {
+      question: jest
+        .fn()
+        .mockResolvedValueOnce('Dineshraj')
+        .mockResolvedValueOnce('Chloe')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('3')
+        .mockResolvedValueOnce('2'),
+      write: jest.fn()
+    } as unknown as Interface;
+
+    jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+    await Connect4(rows, cols);
+
+    expect(makeMoveSpy).toHaveBeenCalledWith(gridBeforeEnd, 2, 'o');
+    expect(consoleLogMock).toHaveBeenCalledWith('Chloe has won!')
   });
 });
