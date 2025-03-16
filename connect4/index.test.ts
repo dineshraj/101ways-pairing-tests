@@ -193,7 +193,7 @@ describe('Connect4', () => {
     expect(rl.write).toHaveBeenCalledWith("It's your move Chloe\n");
   });
 
-  it('determines the winner and finishes the game if someone has 4 horizontal tokens', async () => {
+  it('determines the winner and finishes the game if someone has 4 vertical tokens', async () => {
     const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
     const rows = 4;
     const cols = 4;
@@ -225,6 +225,46 @@ describe('Connect4', () => {
     await Connect4(rows, cols);
 
     expect(makeMoveSpy).toHaveBeenCalledWith(gridBeforeEnd, 2, 'o');
-    expect(consoleLogMock).toHaveBeenCalledWith('Chloe has won!')
+    expect(consoleLogMock).toHaveBeenCalledWith('Chloe has won!');
+  });
+
+  it('determines the winner and finishes the game if someone has 4 upwards diagonal tokens', async () => {
+    const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
+    const rows = 4;
+    const cols = 4;
+    const gridBeforeEnd = [
+      ['.', '.', '.', '.'],
+      ['x', 'o', 'x', 'o'],
+      ['x', 'x', 'o', 'o'],
+      ['x', 'o', 'x', 'o']
+    ];
+
+    const rl = {
+      question: jest
+        .fn()
+        .mockResolvedValueOnce('Dineshraj')
+        .mockResolvedValueOnce('Chloe')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('3')
+        .mockResolvedValueOnce('4')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('3')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('4')
+        .mockResolvedValueOnce('3')
+        .mockResolvedValueOnce('2')
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('4')
+        .mockResolvedValueOnce('4'),
+      write: jest.fn()
+    } as unknown as Interface;
+
+    jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+    await Connect4(rows, cols);
+
+    expect(makeMoveSpy).toHaveBeenCalledWith(gridBeforeEnd, 4, 'x');
+    expect(consoleLogMock).toHaveBeenCalledWith('Dineshraj has won!');
   });
 });

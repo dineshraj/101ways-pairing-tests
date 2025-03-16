@@ -62,3 +62,40 @@ export const checkHorizontalWinner = (grid: Grid, playerSymbol: string) => {
   }
   return false;
 };
+
+export const checkDiagonalUpWinner = (grid: Grid, playerSymbol: string) => {
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (
+        grid[i - 3] &&
+        grid[i][j + 3] &&
+        grid[i][j] === playerSymbol &&
+        grid[i - 1][j + 1] === playerSymbol &&
+        grid[i - 2][j + 2] === playerSymbol &&
+        grid[i - 3][j + 3] === playerSymbol
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+export const checkDiagonalDownWinner = (grid: Grid, playerSymbol: string) => {
+  for (let i = 0; i < grid.length; i++) { 
+    for (let j = 0; j < grid[i].length; j++) {
+      if (
+        grid[i + 3] &&
+        grid[i][j + 3] &&
+        grid[i][j] === playerSymbol &&
+        grid[i + 1][j + 1] === playerSymbol &&
+        grid[i + 2][j + 2] === playerSymbol &&
+        grid[i + 3][j + 3] === playerSymbol
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+

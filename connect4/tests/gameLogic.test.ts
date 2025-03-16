@@ -1,7 +1,9 @@
 import {
   makeMove,
   checkVerticalWinner,
-  checkHorizontalWinner
+  checkHorizontalWinner,
+  checkDiagonalDownWinner,
+  checkDiagonalUpWinner
 } from '../helpers/gameLogic';
 import { createGrid } from '../helpers/grid';
 
@@ -131,4 +133,56 @@ describe('gameLogic', () => {
 
     expect(result).toBe(false);
   });
+
+  it('declares a winner if there are four upwards diagonal tokens', () => {
+    const grid = [
+      ['.', 'o', '.', 'o'],
+      ['x', 'o', 'o', 'x'],
+      ['x', 'o', 'o', 'x'],
+      ['o', 'x', 'x', 'x']
+    ];
+
+    const result = checkDiagonalUpWinner(grid, 'o');
+
+    expect(result).toBe(true);
+  });
+
+    it('does not declare a winner if there are not four upwards diagonal tokens', () => {
+      const grid = [
+        ['.', 'o', '.', 'o'],
+        ['x', 'o', 'x', 'x'],
+        ['x', 'o', 'o', 'x'],
+        ['o', 'x', 'x', 'x']
+      ];
+
+      const result = checkDiagonalUpWinner(grid, 'o');
+
+      expect(result).toBe(false);
+    });
+
+   it('declares a winner if there are four down diagonal tokens', () => {
+     const grid = [
+       ['o', 'o', '.', 'x'],
+       ['x', 'o', 'x', 'x'],
+       ['x', 'o', 'o', 'x'],
+       ['o', 'x', 'x', 'o']
+     ];
+
+     const result = checkDiagonalDownWinner(grid, 'o');
+
+     expect(result).toBe(true);
+   });
+  
+   it('does not declare a winner if there are four down diagonal tokens', () => {
+     const grid = [
+       ['o', 'o', '.', 'x'],
+       ['x', 'o', 'x', 'x'],
+       ['x', 'o', 'x', 'x'],
+       ['o', 'x', 'x', 'o']
+     ];
+
+     const result = checkDiagonalDownWinner(grid, 'o');
+
+     expect(result).toBe(false);
+   });
 });
