@@ -41,7 +41,7 @@ the grid to be 6 x 9 to accommodate this.
 In addition to the usual pieces, players also receive specially marked
 'Power Checkers' pieces. This can be played once per game. One example
 of a 'Power Checker' is an Anvil - this removes all pieces below it
-when played, leaving the Anvil at the bottom row of the board.
+when played, leaving the Anvil at the bottom column of the board.
 
 Implement the Anvil.
 

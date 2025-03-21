@@ -42,15 +42,24 @@ import {
   makeMove
 } from './helpers/gameLogic';
 import { INVALID_COLUMN } from './constants';
+import { log } from 'node:console';
 
 export const someoneHasWon = (value: boolean = false) => {
   return value;
 };
 
+const checkWinner = (grid: Grid, symbol: string) => {
+  return (
+    checkVerticalWinner(grid, symbol) ||
+    checkHorizontalWinner(grid, symbol) ||
+    checkDiagonalDownWinner(grid, symbol) ||
+    checkDiagonalUpWinner(grid, symbol)
+  );
+};
+
 export const runGame = async (
   grid: Grid,
   players: Player[],
-  rows: number,
   cols: number,
   rl: readline.Interface,
   someoneHasWon: (value?: boolean) => boolean
@@ -65,42 +74,48 @@ export const runGame = async (
     rl.write('This is the grid at the moment:\n\n');
     drawGrid(grid);
 
-    const column = await rl.question(
-      `\n\nWhich column do you want to place your token in? (1 to ${cols})\n\n`
+    const dropOrTake = await rl.question(
+      '\nDo you want to drop (D) or take a token from the bottom (P)?'
     );
+    console.log('🚀 ~ dropOrTake:', dropOrTake);
 
-    // validate column number is within range
-    if (validateColumn(grid, parseInt(column))) {
-      const { newGrid, success } = makeMove(
-        grid,
-        parseInt(column),
-        currentPlayer.symbol
+    if (dropOrTake === 'D' || dropOrTake === 'P') {
+      const take = dropOrTake === 'P';
+
+      const column = await rl.question(
+        `\n\nWhich column do you want to do this with? (1 to ${cols})\n`
       );
 
-      if (success) {
-        grid = JSON.parse(JSON.stringify(newGrid));
-        // check if anyone has won vertically (others coming later!)
-        if (
-          checkVerticalWinner(grid, currentPlayer.symbol) ||
-          checkHorizontalWinner(grid, currentPlayer.symbol) ||
-          checkDiagonalDownWinner(grid, currentPlayer.symbol) ||
-          checkDiagonalUpWinner(grid, currentPlayer.symbol)
-        ) {
-          console.log(`${currentPlayer.name} has won!`);
-          drawGrid(grid);
-          return;
+      // validate column number is within range
+      if (validateColumn(grid, parseInt(column))) {
+        const { newGrid, success } = makeMove(
+          grid,
+          parseInt(column),
+          currentPlayer.symbol,
+          take
+        );
+
+        if (success) {
+          // TODO: USE MOVES TO CHECK WHEN TO START CHECKING
+          grid = JSON.parse(JSON.stringify(newGrid));
+          // check if anyone has won vertically (others coming later!)
+          if (checkWinner(grid, currentPlayer.symbol)) {
+            console.log(`${currentPlayer.name} has won!`);
+            drawGrid(grid);
+            return;
+          }
+
+          // swap player index
+          player = player === 0 ? 1 : 0;
+          //increment moves
+          moves++;
         }
-        // swap player index
-        player = player === 0 ? 1 : 0;
-        //increment moves
-        moves++;
+      } else {
+        console.log(INVALID_COLUMN);
       }
     } else {
-      console.log(INVALID_COLUMN);
+      console.log('Please enter "D" or "P"');
     }
-
-    // just for now
-    // return;
   }
 };
 
@@ -111,11 +126,11 @@ const Connect4 = async (rows: number = 6, cols: number = 7) => {
   const playerOneName = await rl.question('Enter player one name: ');
   const playerTwoName = await rl.question('Enter Player two name: ');
   const players = [
-    { name: playerOneName, symbol: 'x' },
+    { name: playerOneName, symbol: 'x',  },
     { name: playerTwoName, symbol: 'o' }
   ];
 
-  return runGame(grid, players, rows, cols, rl, someoneHasWon);
+  return runGame(grid, players, cols, rl, someoneHasWon);
 };
 
 export default Connect4;
