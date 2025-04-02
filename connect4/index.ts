@@ -1,35 +1,3 @@
-/*
-  create grid (6x7)
-  instantiate it all with .'s
-
-  interactive version of the game
-    - two plays playing on the same computer
-      - player 1: x
-      - player 2: o
-
-  while no winner
-   - loop between player one and player two
-    - each playerplaces a token
-    - games check if the player has won after each go
-
-
-  Winning conditions:
-    any four tokens in a row
-      - any direction (including diagonals)
-
-      e.g
-
-      [
-        [., ., ., ., ., .,]
-        [., ., ., ., ., .,]
-        [., x, x, x, x, .,]
-        [., ., ., ., ., .,]
-        [., ., ., ., ., .,]
-        [., ., ., ., ., .,]
-        [., ., ., ., ., .,]
-      ]
-*/
-
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { createGrid, drawGrid, validateColumn } from './helpers/grid';
@@ -42,7 +10,7 @@ import {
   makeMove
 } from './helpers/gameLogic';
 import { INVALID_COLUMN } from './constants';
-import { log } from 'node:console';
+import powerUps from './helpers/powerups';
 
 export const someoneHasWon = (value: boolean = false) => {
   return value;
@@ -77,44 +45,78 @@ export const runGame = async (
     const dropOrTake = await rl.question(
       '\nDo you want to drop (D) or take a token from the bottom (P)?'
     );
-    console.log('🚀 ~ dropOrTake:', dropOrTake);
 
     if (dropOrTake === 'D' || dropOrTake === 'P') {
-      const take = dropOrTake === 'P';
+      const take = dropOrTake === 'P'; //change name of this variable
+      let chosenPowerUp = '';
 
-      const column = await rl.question(
-        `\n\nWhich column do you want to do this with? (1 to ${cols})\n`
-      );
+      if (dropOrTake === 'D' && currentPlayer.powerUps.length > 0) {
+        rl.write(`You currently have ${currentPlayer.powerUps.toString()}\n\n`);
+        chosenPowerUp = await rl.question(
+          'Do you want to use a powerup? If so type the name,  or "n" for no\n\n'
+        );
+        if (
+          chosenPowerUp !== 'n' &&
+          currentPlayer.powerUps.includes(chosenPowerUp)
+        ) {
+          rl.write(`You have chosen the ${chosenPowerUp}\n\n`);
+        } else if (chosenPowerUp === 'n') {
+          rl.write(
+            'fairs, keep it for later init when you really need it.\n\n'
+          );
+        } else {
+          chosenPowerUp = 'invalid';
+        }
+      }
 
-      // validate column number is within range
-      if (validateColumn(grid, parseInt(column))) {
-        const { newGrid, success } = makeMove(
-          grid,
-          parseInt(column),
-          currentPlayer.symbol,
-          take
+      if (chosenPowerUp !== 'invalid') {
+        const column = await rl.question(
+          `\n\nWhich column do you want to do play in? (1 to ${cols})\n\n`
         );
 
-        if (success) {
-          // TODO: USE MOVES TO CHECK WHEN TO START CHECKING
-          grid = JSON.parse(JSON.stringify(newGrid));
-          // check if anyone has won vertically (others coming later!)
-          if (checkWinner(grid, currentPlayer.symbol)) {
-            console.log(`${currentPlayer.name} has won!`);
-            drawGrid(grid);
-            return;
-          }
+        // validate column number is within range
+        if (validateColumn(grid, parseInt(column))) {
+          const { newGrid, success } = makeMove(
+            grid,
+            parseInt(column),
+            currentPlayer.symbol,
+            take,
+            chosenPowerUp
+          );
 
-          // swap player index
-          player = player === 0 ? 1 : 0;
-          //increment moves
-          moves++;
+          if (success) {
+            // remove from the powerup array
+            if (chosenPowerUp !== '') {
+              const updatedPowerUps = currentPlayer.powerUps.filter(
+                (powerup) => powerup !== chosenPowerUp
+              );
+              currentPlayer.powerUps = updatedPowerUps;
+            }
+
+            grid = JSON.parse(JSON.stringify(newGrid));
+
+            // TODO: USE MOVES TO CHECK WHEN TO START CHECKING ( <= 7)
+            if (checkWinner(grid, currentPlayer.symbol)) {
+              console.log(`${currentPlayer.name} has won!`);
+              drawGrid(grid);
+              return;
+            }
+
+            // swap player index
+            player = player === 0 ? 1 : 0;
+            //increment moves
+            moves++;
+          }
+        } else {
+          console.log(INVALID_COLUMN);
         }
       } else {
-        console.log(INVALID_COLUMN);
+        console.log('write a valid powerup you dick');
       }
     } else {
-      console.log('Please enter "D" or "P"');
+      console.log(
+        'Stop spazzing out and enter "D" or "P", I literally just said that.'
+      );
     }
   }
 };
@@ -126,11 +128,14 @@ const Connect4 = async (rows: number = 6, cols: number = 7) => {
   const playerOneName = await rl.question('Enter player one name: ');
   const playerTwoName = await rl.question('Enter Player two name: ');
   const players = [
-    { name: playerOneName, symbol: 'x',  },
-    { name: playerTwoName, symbol: 'o' }
+    { name: playerOneName, symbol: 'x', powerUps },
+    { name: playerTwoName, symbol: 'o', powerUps }
   ];
-
+  rl.write('lol, you have shit names bruv, feel sorry for you.');
   return runGame(grid, players, cols, rl, someoneHasWon);
 };
 
 export default Connect4;
+
+// powerups are set to true by default which is offsetting the
+// rl mock in the tests and making the tests fail

@@ -22,6 +22,4 @@ export const validateColumn = (grid: Grid, chosenColumn: number) => {
   const chosenColumnAsIndex = chosenColumn - 1;
 
   return chosenColumnAsIndex < grid[0].length;
-}
-
-
+};

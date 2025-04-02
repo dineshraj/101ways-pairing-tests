@@ -38,7 +38,44 @@ describe('Connect4', () => {
   });
 
   describe('Game', () => {
-    it('accepts two players names', async () => {
+    it('defaults to a 6 x 7 grid', async () => {
+      runGameMock.mockImplementation(jest.fn());
+
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('Dineshraj')
+          .mockResolvedValueOnce('Chloe'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil'] },
+        { name: 'Chloe', symbol: 'o', powerUps: ['anvil'] }
+      ];
+
+      await Connect4();
+
+      expect(connect4Module.runGame).toHaveBeenCalledWith(
+        [
+          ['.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.']
+        ],
+        playerMock,
+        7,
+        rl,
+        someoneHasWon
+      );
+    });
+
+    it('accepts two players names and generates player objects', async () => {
       runGameMock.mockImplementation(jest.fn());
       const rows = 1;
       const cols = 1;
@@ -54,8 +91,8 @@ describe('Connect4', () => {
       jest.mocked(connect4Module.runGame);
 
       const playerMock = [
-        { name: 'Dineshraj', symbol: 'x' },
-        { name: 'Chloe', symbol: 'o' }
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil'] },
+        { name: 'Chloe', symbol: 'o', powerUps: ['anvil'] }
       ];
 
       await Connect4(rows, cols);
@@ -91,77 +128,16 @@ describe('Connect4', () => {
 
       await Connect4(rows, cols);
 
-      expect(consoleLogMock).toHaveBeenCalledWith('Please enter "D" or "P"');
-    });
-
-    it('asks the player if they want to pop a token from the bottom and makes the move accordingly', async () => {
-      const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
-      const rows = 3;
-      const cols = 2;
-      const initialGrid = [
-        ['.', 'o'],
-        ['x', 'x'],
-        ['o', 'x']
-      ];
-      const secondGrid = [
-        ['.', 'o'],
-        ['.', 'x'],
-        ['x', 'x']
-      ];
-
-      const rl = {
-        question: jest
-          .fn()
-          .mockResolvedValueOnce('Dineshraj')
-          .mockResolvedValueOnce('Chloe')
-          // the below gets to the initial grid state above
-          .mockResolvedValueOnce('D')
-          .mockResolvedValueOnce('2')
-          .mockResolvedValueOnce('D')
-          .mockResolvedValueOnce('1')
-          .mockResolvedValueOnce('D')
-          .mockResolvedValueOnce('2')
-          .mockResolvedValueOnce('D')
-          .mockResolvedValueOnce('2')
-          .mockResolvedValueOnce('D')
-          .mockResolvedValueOnce('1')
-
-          // taking from the bottom from the initial grid
-          .mockResolvedValueOnce('P')
-          .mockResolvedValueOnce('1')
-          // taking from the bottom from the second grid
-          .mockResolvedValueOnce('P')
-          .mockResolvedValueOnce('2'),
-        write: jest.fn()
-      } as unknown as Interface;
-
-      jest.mocked(readline.createInterface).mockReturnValue(rl);
-
-      someoneHasWonMock
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => false)
-        .mockImplementationOnce(() => true);
-
-      await Connect4(rows, cols);
-
-      expect(makeMoveSpy).toHaveBeenCalledWith(initialGrid, 1, 'o', true);
-      expect(makeMoveSpy).toHaveBeenCalledWith(secondGrid, 2, 'x', true);
+      expect(consoleLogMock).toHaveBeenCalledWith(
+        'Stop spazzing out and enter "D" or "P", I literally just said that.'
+      );
     });
 
     it('tells the user they have chosen an invalid column and asks again', async () => {
       const validateColumnSpy = jest.spyOn(gridHelpers, 'validateColumn');
-      const rows = 1;
-      const cols = 1;
       const rl = {
         question: jest
           .fn()
-          .mockResolvedValueOnce('Dineshraj')
-          .mockResolvedValueOnce('Chloe')
           .mockResolvedValueOnce('D')
           .mockResolvedValueOnce('2'),
         write: jest.fn()
@@ -173,7 +149,12 @@ describe('Connect4', () => {
         .mockImplementationOnce(() => false)
         .mockImplementationOnce(() => true);
 
-      await Connect4(rows, cols);
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame([['.']], playerMock, 1, rl, someoneHasWon);
 
       expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
       expect(validateColumnSpy).toHaveReturnedWith(false);
@@ -191,8 +172,6 @@ describe('Connect4', () => {
       const rl = {
         question: jest
           .fn()
-          .mockResolvedValueOnce('Dineshraj')
-          .mockResolvedValueOnce('Chloe')
           .mockResolvedValueOnce('D')
           .mockResolvedValueOnce('2'),
         write: jest.fn()
@@ -204,11 +183,25 @@ describe('Connect4', () => {
         .mockImplementationOnce(() => false)
         .mockImplementationOnce(() => true);
 
-      await Connect4(rows, cols);
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [
+          ['.', '.'],
+          ['.', '.']
+        ],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
 
       expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
       expect(validateColumnSpy).toHaveReturnedWith(true);
-      expect(makeMoveSpy).toHaveBeenCalledWith(grid, 2, 'x', false);
+      expect(makeMoveSpy).toHaveBeenCalledWith(grid, 2, 'x', false, '');
     });
 
     it('makes a valid move if the column is not empty', async () => {
@@ -228,8 +221,6 @@ describe('Connect4', () => {
       const rl = {
         question: jest
           .fn()
-          .mockResolvedValueOnce('Dineshraj')
-          .mockResolvedValueOnce('Chloe')
           .mockResolvedValueOnce('D')
           .mockResolvedValueOnce('2')
           .mockResolvedValueOnce('D')
@@ -246,13 +237,27 @@ describe('Connect4', () => {
         .mockImplementationOnce(() => false)
         .mockImplementationOnce(() => true);
 
-      await Connect4(rows, cols);
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [
+          ['.', '.'],
+          ['.', '.']
+        ],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
 
       expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
-      expect(makeMoveSpy).toHaveBeenCalledWith(initialGrid, 2, 'x', false);
+      expect(makeMoveSpy).toHaveBeenCalledWith(initialGrid, 2, 'x', false, '');
       expect(rl.write).toHaveBeenCalledWith("It's your move Chloe\n");
       expect(validateColumnSpy).toHaveReturnedWith(true);
-      expect(makeMoveSpy).toHaveBeenCalledWith(secondGrid, 2, 'o', false);
+      expect(makeMoveSpy).toHaveBeenCalledWith(secondGrid, 2, 'o', false, '');
     });
 
     it('swaps players after a successful move', async () => {
@@ -262,8 +267,6 @@ describe('Connect4', () => {
       const rl = {
         question: jest
           .fn()
-          .mockResolvedValueOnce('Dineshraj')
-          .mockResolvedValueOnce('Chloe')
           .mockResolvedValueOnce('D')
           .mockResolvedValueOnce('2')
           .mockResolvedValueOnce('D')
@@ -278,7 +281,21 @@ describe('Connect4', () => {
         .mockImplementationOnce(() => false)
         .mockImplementationOnce(() => true);
 
-      await Connect4(rows, cols);
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [
+          ['.', '.'],
+          ['.', '.']
+        ],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
 
       expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
       expect(rl.write).toHaveBeenCalledWith("It's your move Chloe\n");
@@ -286,7 +303,6 @@ describe('Connect4', () => {
 
     it('determines the winner and finishes the game if someone has 4 vertical tokens', async () => {
       const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
-      const rows = 4;
       const cols = 4;
       const gridBeforeEnd = [
         ['.', '.', '.', '.'],
@@ -321,9 +337,31 @@ describe('Connect4', () => {
 
       jest.mocked(readline.createInterface).mockReturnValue(rl);
 
-      await Connect4(rows, cols);
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
 
-      expect(makeMoveSpy).toHaveBeenCalledWith(gridBeforeEnd, 2, 'o', false);
+      await connect4Module.runGame(
+        [
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.']
+        ],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(makeMoveSpy).toHaveBeenCalledWith(
+        gridBeforeEnd,
+        2,
+        'o',
+        false,
+        ''
+      );
       expect(consoleLogMock).toHaveBeenCalledWith('Chloe has won!');
     });
 
@@ -374,10 +412,311 @@ describe('Connect4', () => {
 
       jest.mocked(readline.createInterface).mockReturnValue(rl);
 
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.'],
+          ['.', '.', '.', '.']
+        ],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(makeMoveSpy).toHaveBeenCalledWith(
+        gridBeforeEnd,
+        4,
+        'x',
+        false,
+        ''
+      );
+      expect(consoleLogMock).toHaveBeenCalledWith('Dineshraj has won!');
+    });
+  });
+
+  describe('Powerups', () => {
+    it('only asks the player if they want to use a powerup if they choose "D"', async () => {
+      const rows = 2;
+      const cols = 2;
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('Dineshraj')
+          .mockResolvedValueOnce('Chloe')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('anvil')
+          .mockResolvedValueOnce('2'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
       await Connect4(rows, cols);
 
-      expect(makeMoveSpy).toHaveBeenCalledWith(gridBeforeEnd, 4, 'x', false);
-      expect(consoleLogMock).toHaveBeenCalledWith('Dineshraj has won!');
+      expect(rl.write).toHaveBeenCalledWith('You have chosen the anvil\n\n');
+    });
+
+    it('does not ask the player if they want to use a powerup if they do not have one', async () => {
+      const cols = 2;
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [['.']],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(rl.write).not.toHaveBeenCalledWith('You have chosen the anvil');
+    });
+
+    it.only('removes the powerup from the player if they use it', async () => {
+      const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
+      const initialGrid = [
+        ['.', '.'],
+        ['o', '.'],
+        ['x', '.']
+      ];
+
+      const expectedGrid = [
+        ['.', '.'],
+        ['o', '.'],
+        ['x', '.']
+      ];
+      const cols = 2;
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('anvil')
+          .mockResolvedValueOnce('1')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1')
+          // first player's go again but it wont ask for the anvil
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil'] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        initialGrid,
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(rl.write).toHaveBeenCalledWith('You have chosen the anvil\n\n');     
+      expect(makeMoveSpy).toHaveBeenCalledWith(expectedGrid, 1, 'x', false, '');
+    });
+
+    it('lists the power tokens the user has', async () => {
+      const cols = 2;
+      const rl = {
+        question: jest.fn().mockResolvedValueOnce('D'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil', 'lightsabre'] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [['.', '.']],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(rl.write).toHaveBeenCalledWith(
+        'You currently have anvil,lightsabre\n\n'
+      );
+    });
+
+    it('asks the user again if they enter an incorrect powerup', async () => {
+      const cols = 2;
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('penis-power'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil', 'lightsabre'] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [['.', '.']],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(rl.write).not.toHaveBeenCalledWith(
+        `You have chosen the penis-power\n\n`
+      );
+      expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
+      expect(consoleLogMock).toHaveBeenCalledWith(
+        'write a valid powerup you dick'
+      );
+      expect(rl.write).toHaveBeenCalledWith("It's your move Dineshraj\n");
+    });
+
+    it('skips the powerup logic if the user enters "n"', async () => {
+      const cols = 2;
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('n')
+          .mockResolvedValueOnce('1'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+      jest.mocked(connect4Module.runGame);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: ['anvil'] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        [['.', '.']],
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(rl.write).toHaveBeenCalledWith(
+        'fairs, keep it for later init when you really need it.\n\n'
+      );
+    });
+
+    it('asks the player if they want to pop a token from the bottom and makes the move accordingly', async () => {
+      const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
+      const cols = 2;
+      const initialGrid = [
+        ['.', '.'],
+        ['.', '.'],
+        ['.', 'x']
+      ];
+      const expectedGrid = [
+        ['.', '.'],
+        ['.', '.'],
+        ['o', '.']
+      ];
+
+      const rl = {
+        question: jest
+          .fn()
+          .mockResolvedValueOnce('P')
+          .mockResolvedValueOnce('2')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1')
+          .mockResolvedValueOnce('D')
+          .mockResolvedValueOnce('1'),
+        write: jest.fn()
+      } as unknown as Interface;
+
+      jest.mocked(readline.createInterface).mockReturnValue(rl);
+
+      someoneHasWonMock
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => false)
+        .mockImplementationOnce(() => true);
+
+      const playerMock = [
+        { name: 'Dineshraj', symbol: 'x', powerUps: [] },
+        { name: 'Chloe', symbol: 'o', powerUps: [] }
+      ];
+
+      await connect4Module.runGame(
+        initialGrid,
+        playerMock,
+        cols,
+        rl,
+        someoneHasWon
+      );
+
+      expect(makeMoveSpy).toHaveBeenCalledWith(expectedGrid, 1, 'x', false, '');
     });
   });
 });

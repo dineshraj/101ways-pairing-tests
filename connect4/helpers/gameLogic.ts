@@ -27,31 +27,56 @@ export const popLogic = (
   return success;
 };
 
+export const isColumnFull = (grid: Grid, columnAsIndex: number) => {
+  return grid[0][columnAsIndex] !== EMPTY;
+};
+
 export const placingLogic = (
   newGrid: Grid,
   columnAsIndex: number,
   success: boolean,
-  playerSymbol: string
+  playerSymbol: string,
+  powerUp: string
 ) => {
-  // check if bottom of column is empty
-  if (isColumnEmpty(newGrid, columnAsIndex)) {
+  // check for full column
+  if (isColumnFull(newGrid, columnAsIndex)) {
+    console.log('Invalid move');
+    success = false;
+    return success;
+  }
+
+  // different logic for powerups
+  // TODO: split out into own function specifically for anvil
+  if (powerUp !== 'n' && powerUp === 'anvil') {
+    if (isColumnEmpty(newGrid, columnAsIndex)) {
+      console.log('bit of a simpleton using it on a empty column right?');
+    }
+
+    for (let i = 0; i < newGrid.length; i++) {
+      newGrid[i][columnAsIndex] = EMPTY;
+    }
+
+    //stll want to put the players token at the bottom
+    //TODO: refactor as same logic is used below
     newGrid[newGrid.length - 1][columnAsIndex] = playerSymbol;
-    success = true;
-  } else {
-    // this is for when the column isn't empty
-    for (let i = 0; i <= newGrid.length; i++) {
-      if (newGrid[i][columnAsIndex] !== EMPTY) {
-        if (i - 1 >= 0) {
+
+  } else {     
+    // check if bottom of column is empty
+    // and just put it there if it is
+    if (isColumnEmpty(newGrid, columnAsIndex)) {
+      newGrid[newGrid.length - 1][columnAsIndex] = playerSymbol;
+    } else {
+      // this is for when the column isn't empty
+      for (let i = 0; i < newGrid.length; i++) {
+        if (newGrid[i][columnAsIndex] !== EMPTY) {
+          // place token above the one that is not empty
           newGrid[i - 1][columnAsIndex] = playerSymbol;
-          success = true;
-          break;
-        } else {
-          console.log('Invalid move');
           break;
         }
       }
     }
   }
+  success = true;
   return success;
 };
 
@@ -59,7 +84,8 @@ export const makeMove = (
   grid: Grid,
   column: number,
   playerSymbol: string,
-  pop: boolean = false
+  pop: boolean = false,
+  powerUp: string = ''
 ) => {
   const columnAsIndex = column - 1;
   // make deep copy of array
@@ -69,7 +95,13 @@ export const makeMove = (
   if (pop) {
     success = popLogic(newGrid, columnAsIndex, success);
   } else {
-    success = placingLogic(newGrid, columnAsIndex, success, playerSymbol);
+    success = placingLogic(
+      newGrid,
+      columnAsIndex,
+      success,
+      playerSymbol,
+      powerUp
+    );
   }
 
   return { newGrid, success };

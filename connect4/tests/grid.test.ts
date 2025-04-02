@@ -1,6 +1,5 @@
 import exp from 'constants';
 import { createGrid, drawGrid, validateColumn } from '../helpers/grid';
-import { INVALID_COLUMN } from '../constants';
 
 describe('Grid helper', () => {
   let consoleLogMock: jest.SpyInstance;
@@ -31,6 +30,11 @@ describe('Grid helper', () => {
       ];
       expect(grid).toStrictEqual(expectedGrid);
     });
+
+    // it.skip('does not allow a grid to be created with a winning criteria bigger than the grid', () => {
+      // createGrid({ rows: 2, cols: 3, toWin: 8 });
+      // expect(consoleLogMock).toHaveBeenCalledWith('Cannot make grid smaller than what it takes to win');
+    // })
   });
 
   describe('drawGrid', () => {

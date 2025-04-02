@@ -4,7 +4,8 @@ import {
   checkHorizontalWinner,
   checkDiagonalDownWinner,
   checkDiagonalUpWinner,
-  isColumnEmpty
+  isColumnEmpty,
+  isColumnFull
 } from '../helpers/gameLogic';
 import { createGrid } from '../helpers/grid';
 
@@ -104,12 +105,7 @@ describe('gameLogic', () => {
         ['.', 'x', 'x'],
         ['o', 'x', 'o']
       ];
-
       const { newGrid, success } = makeMove(grid, 3, 'o', true);
-
-      console.log('🚀 ~ it.only ~ grid:', grid);
-      console.log('🚀 ~ it.only ~ expectedGrid:', expectedGrid);
-      console.log('🚀 ~ it.only ~ newGrid:', newGrid);
 
       expect(newGrid).toStrictEqual(expectedGrid);
       expect(success).toBe(true);
@@ -160,10 +156,6 @@ describe('gameLogic', () => {
       ];
 
       const { newGrid, success } = makeMove(grid, 1, 'o', true);
-
-      console.log('🚀 ~ it.only ~ grid:', grid);
-      console.log('🚀 ~ it.only ~ expectedGrid:', expectedGrid);
-      console.log('🚀 ~ it.only ~ newGrid:', newGrid);
 
       expect(newGrid).toStrictEqual(expectedGrid);
       expect(success).toBe(false);
@@ -289,22 +281,111 @@ describe('gameLogic', () => {
     expect(isEmpty).toBe(true);
   });
 
-  describe.skip('power checkers', () => {
-    it('allows the user to use an anvil', () => {
-      const grid = createGrid(4, 3);
-      const expectedGrid = [
-        ['.', '.', '.'],
-        ['.', 'x', '.'],
-        ['x', 'x', '.'],
-        ['x', 'x', 'x']
+  describe('isColumnFull', () => {
+    it('checks if the column is full', () => {
+      const grid = [
+        ['.', 'o', '.', 'x'],
+        ['.', 'o', 'x', 'x'],
+        ['.', 'o', 'x', 'x'],
+        ['.', 'x', 'x', 'o']
       ];
 
-      makeMove(grid, 2, 'x');
-      makeMove(grid, 2, 'x');
-      makeMove(grid, 2, 'x');
-      makeMove(grid, 1, 'x');
-      makeMove(grid, 3, 'x');
-      makeMove(grid, 2, 'x');
+      const columFull = isColumnFull(grid, 3);
+
+      expect(columFull).toBe(true);
     });
+
+    it('returns false if the column is not full', () => {
+      const grid = [
+        ['.', 'o', '.', 'x'],
+        ['.', 'o', 'x', 'x'],
+        ['.', 'o', 'x', 'x'],
+        ['.', 'x', 'x', 'o']
+      ];
+
+      const columFull = isColumnFull(grid, 2);
+
+      expect(columFull).toBe(false);
+    });
+  });
+
+  describe('power tokens', () => {
+    it('allows the user to use an anvil', () => {
+      const grid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', 'x'],
+        ['.', 'x', 'o'],
+        ['o', 'x', 'x']
+      ];
+
+      const expectedGrid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', 'x', '.'],
+        ['o', 'x', 'o']
+      ];
+
+      const { newGrid, success } = makeMove(grid, 3, 'o', false, 'anvil');
+
+      expect(newGrid).toStrictEqual(expectedGrid);
+      expect(success).toBe(true);
+    });
+
+    it('does not use a token if the user has entered "n"', () => {
+      const grid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', 'x'],
+        ['.', 'x', 'o'],
+        ['o', 'x', 'x']
+      ];
+
+      const expectedGrid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', 'o'],
+        ['.', '.', 'x'],
+        ['.', 'x', 'o'],
+        ['o', 'x', 'x']
+      ];
+
+      const { newGrid, success } = makeMove(grid, 3, 'o', false, 'n');
+
+      expect(newGrid).toStrictEqual(expectedGrid);
+      expect(success).toBe(true);
+    })
+
+    it('gives a snarky comment if the user puts the anvil on an empty column', () => {
+      const grid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', 'x'],
+        ['.', 'x', 'o'],
+        ['.', 'x', 'x']
+      ];
+
+      const expectedGrid = [
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.'],
+        ['.', '.', 'x'],
+        ['.', 'x', 'o'],
+        ['o', 'x', 'x']
+      ];
+
+      const { newGrid } = makeMove(grid, 1, 'o', false, 'anvil');
+
+      expect(newGrid).toStrictEqual(expectedGrid);
+      expect(consoleLogMock).toHaveBeenCalledWith(
+        'bit of a simpleton using it on a empty column right?'
+      );
+      
+    })
   });
 });

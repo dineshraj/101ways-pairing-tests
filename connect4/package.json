@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/run.js",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "build": "tsc",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch --detectOpenHandles --forceExit"
   },
   "keywords": [],
   "author": "",
