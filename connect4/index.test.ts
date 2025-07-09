@@ -10,6 +10,7 @@ jest.mock('node:readline/promises', () => ({
   createInterface: jest.fn()
 }));
 
+
 describe('Connect4', () => {
   let consoleLogMock: jest.SpyInstance;
   let runGameMock: jest.SpyInstance;
@@ -500,7 +501,7 @@ describe('Connect4', () => {
       expect(rl.write).not.toHaveBeenCalledWith('You have chosen the anvil');
     });
 
-    it.only('removes the powerup from the player if they use it', async () => {
+    it('removes the powerup from the player if they use it', async () => {
       const makeMoveSpy = jest.spyOn(gameLogic, 'makeMove');
       const initialGrid = [
         ['.', '.'],
@@ -550,7 +551,7 @@ describe('Connect4', () => {
         someoneHasWon
       );
 
-      expect(rl.write).toHaveBeenCalledWith('You have chosen the anvil\n\n');     
+      expect(rl.write).toHaveBeenCalledWith('You have chosen the anvil\n\n');
       expect(makeMoveSpy).toHaveBeenCalledWith(expectedGrid, 1, 'x', false, '');
     });
 

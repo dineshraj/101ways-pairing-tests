@@ -136,6 +136,3 @@ const Connect4 = async (rows: number = 6, cols: number = 7) => {
 };
 
 export default Connect4;
-
-// powerups are set to true by default which is offsetting the
-// rl mock in the tests and making the tests fail
