@@ -9,5 +9,5 @@ const partyTranslation = {
 
 export const getFullPartyName = (acronym: string) => {
   const trimmedAcronym = acronym.trim();
-  return partyTranslation[trimmedAcronym];
+  return partyTranslation[trimmedAcronym as keyof typeof partyTranslation];
 };
